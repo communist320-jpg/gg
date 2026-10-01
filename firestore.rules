@@ -1,0 +1,109 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.admin == true ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin')
+      );
+    }
+
+    function isBusinessOwner(businessId) {
+      return isSignedIn() && (
+        (exists(/databases/$(database)/documents/businesses/$(businessId)) &&
+         get(/databases/$(database)/documents/businesses/$(businessId)).data.ownerId == request.auth.uid) ||
+        isAdmin()
+      );
+    }
+
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow create, update: if isOwner(userId) || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /test/{docId} {
+      allow read: if true;
+    }
+
+    match /businesses/{businessId} {
+      allow read: if true;
+      allow create: if isSignedIn() && request.resource.data.ownerId == request.auth.uid;
+      allow update: if isBusinessOwner(businessId) ||
+        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['viewsCount', 'phoneClicksCount', 'catalogViewsCount', 'directionClicksCount', 'qrScansCount']));
+      allow delete: if isBusinessOwner(businessId);
+    }
+
+    match /catalogItems/{itemId} {
+      allow read: if true;
+      allow create: if isSignedIn() && isBusinessOwner(request.resource.data.businessId);
+      allow update, delete: if isSignedIn() && isBusinessOwner(resource.data.businessId);
+    }
+
+    match /stories/{storyId} {
+      allow read: if true;
+      allow create: if isSignedIn() && isBusinessOwner(request.resource.data.businessId);
+      allow update, delete: if isSignedIn() && isBusinessOwner(resource.data.businessId);
+    }
+
+    match /offers/{offerId} {
+      allow read: if true;
+      allow create: if isSignedIn() && isBusinessOwner(request.resource.data.businessId);
+      allow update, delete: if isSignedIn() && isBusinessOwner(resource.data.businessId);
+    }
+
+    match /businessRequests/{requestId} {
+      allow read: if true;
+      allow create: if isSignedIn() && isBusinessOwner(request.resource.data.businessId);
+      allow update, delete: if isSignedIn() && isBusinessOwner(resource.data.businessId);
+    }
+
+    match /connections/{connectionId} {
+      allow read: if true;
+      allow create: if isSignedIn() && isBusinessOwner(request.resource.data.fromBusinessId);
+      allow update: if isSignedIn() && (isBusinessOwner(resource.data.toBusinessId) || isBusinessOwner(resource.data.fromBusinessId));
+      allow delete: if isSignedIn() && isBusinessOwner(resource.data.fromBusinessId);
+    }
+
+    match /feedback/{feedbackId} {
+      allow read: if true;
+      allow create: if isSignedIn() || request.resource.data.experience != null;
+      allow update: if isBusinessOwner(resource.data.businessId) || isAdmin();
+      allow delete: if isBusinessOwner(resource.data.businessId) || isAdmin();
+    }
+
+    match /messages/{messageId} {
+      allow read: if isSignedIn() && (
+        resource.data.senderId == request.auth.uid ||
+        resource.data.recipientId == request.auth.uid ||
+        isBusinessOwner(resource.data.businessId)
+      );
+      allow create: if isSignedIn() && request.resource.data.senderId == request.auth.uid;
+      allow update: if isSignedIn() && (
+        resource.data.recipientId == request.auth.uid ||
+        isBusinessOwner(resource.data.businessId)
+      );
+      allow delete: if isAdmin();
+    }
+
+    match /referrals/{referralId} {
+      allow read: if isSignedIn() && (isBusinessOwner(resource.data.inviterBusinessId) || isAdmin());
+      allow create: if isSignedIn() && isBusinessOwner(request.resource.data.inviterBusinessId);
+      allow update, delete: if isAdmin();
+    }
+
+    match /adminLogs/{logId} {
+      allow read, write: if isAdmin();
+    }
+  }
+}

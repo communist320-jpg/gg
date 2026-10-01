@@ -1,0 +1,6 @@
+{
+  "name": "AOCSF - Army of Collective Shop Front",
+  "description": "Every Local Business. One Connected Front. Bathinda's premier local business network, directory, real-time catalog, AI copilot, and B2B community.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

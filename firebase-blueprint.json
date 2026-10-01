@@ -1,0 +1,232 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile with role-based access",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "role": { "type": "string", "enum": ["customer", "business_owner", "admin"] },
+        "phone": { "type": "string" },
+        "avatarUrl": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "Business": {
+      "title": "Business",
+      "description": "Registered local business profile in Bathinda",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "name": { "type": "string" },
+        "slug": { "type": "string" },
+        "categories": { "type": "array" },
+        "description": { "type": "string" },
+        "address": { "type": "string" },
+        "locality": { "type": "string" },
+        "city": { "type": "string" },
+        "state": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "openingHours": { "type": "object" },
+        "priceRange": { "type": "string" },
+        "photos": { "type": "array" },
+        "logoUrl": { "type": "string" },
+        "status": { "type": "string", "enum": ["open", "closed", "busy", "temporarily_closed"] },
+        "verifiedLevel": { "type": "string", "enum": ["email_verified", "phone_verified", "profile_complete", "aocsf_verified"] },
+        "completenessScore": { "type": "number" },
+        "isFeatured": { "type": "boolean" },
+        "viewsCount": { "type": "number" },
+        "phoneClicksCount": { "type": "number" },
+        "catalogViewsCount": { "type": "number" },
+        "directionClicksCount": { "type": "number" },
+        "qrScansCount": { "type": "number" },
+        "googleFormsUrl": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "ownerId", "name", "categories", "address", "phone"]
+    },
+    "CatalogItem": {
+      "title": "CatalogItem",
+      "description": "Product or service offered by a business",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "businessId": { "type": "string" },
+        "name": { "type": "string" },
+        "category": { "type": "string" },
+        "description": { "type": "string" },
+        "price": { "type": "number" },
+        "photoUrl": { "type": "string" },
+        "isAvailable": { "type": "boolean" },
+        "isFeatured": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "businessId", "name"]
+    },
+    "Story": {
+      "title": "Story",
+      "description": "Local business short update or story",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "businessId": { "type": "string" },
+        "businessName": { "type": "string" },
+        "businessLogo": { "type": "string" },
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "type": { "type": "string", "enum": ["new_arrival", "new_service", "holiday_notice", "announcement", "special_event"] },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "businessId", "businessName", "title", "content", "type"]
+    },
+    "Offer": {
+      "title": "Offer",
+      "description": "Limited-time deal or promotional offer",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "businessId": { "type": "string" },
+        "businessName": { "type": "string" },
+        "title": { "type": "string" },
+        "discount": { "type": "string" },
+        "validUntil": { "type": "string" },
+        "code": { "type": "string" },
+        "terms": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "businessId", "businessName", "title", "discount"]
+    },
+    "BusinessRequest": {
+      "title": "BusinessRequest",
+      "description": "B2B request posted on the request board",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "businessId": { "type": "string" },
+        "businessName": { "type": "string" },
+        "title": { "type": "string" },
+        "details": { "type": "string" },
+        "category": { "type": "string" },
+        "urgency": { "type": "string", "enum": ["normal", "urgent"] },
+        "contactEmail": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "businessId", "businessName", "title", "details"]
+    },
+    "BusinessConnection": {
+      "title": "BusinessConnection",
+      "description": "B2B network connection and collaboration proposal",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "fromBusinessId": { "type": "string" },
+        "toBusinessId": { "type": "string" },
+        "fromBusinessName": { "type": "string" },
+        "toBusinessName": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "accepted", "rejected"] },
+        "proposalText": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "fromBusinessId", "toBusinessId", "status"]
+    },
+    "Feedback": {
+      "title": "Feedback",
+      "description": "Customer feedback and reviews",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "businessId": { "type": "string" },
+        "customerName": { "type": "string" },
+        "customerId": { "type": "string" },
+        "experience": { "type": "string" },
+        "category": { "type": "string" },
+        "rating": { "type": "number" },
+        "comment": { "type": "string" },
+        "isPublished": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "businessId", "experience", "comment"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "Quick connect message between customer and business",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "threadId": { "type": "string" },
+        "businessId": { "type": "string" },
+        "senderId": { "type": "string" },
+        "senderName": { "type": "string" },
+        "recipientId": { "type": "string" },
+        "content": { "type": "string" },
+        "isRead": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "threadId", "businessId", "senderId", "content"]
+    },
+    "Referral": {
+      "title": "Referral",
+      "description": "Invite-a-business referral record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "inviterBusinessId": { "type": "string" },
+        "inviterBusinessName": { "type": "string" },
+        "invitedBusinessName": { "type": "string" },
+        "invitedEmail": { "type": "string" },
+        "status": { "type": "string", "enum": ["sent", "joined"] },
+        "code": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "inviterBusinessId", "invitedBusinessName"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profile with role-based attributes"
+    },
+    "/businesses/{businessId}": {
+      "schema": "Business",
+      "description": "Public local business directory listings"
+    },
+    "/catalogItems/{itemId}": {
+      "schema": "CatalogItem",
+      "description": "Digital catalog items and services for businesses"
+    },
+    "/stories/{storyId}": {
+      "schema": "Story",
+      "description": "Local business stories and notices"
+    },
+    "/offers/{offerId}": {
+      "schema": "Offer",
+      "description": "AOCSF deal board promotions"
+    },
+    "/businessRequests/{requestId}": {
+      "schema": "BusinessRequest",
+      "description": "B2B request board postings"
+    },
+    "/connections/{connectionId}": {
+      "schema": "BusinessConnection",
+      "description": "B2B connection graph and collaboration proposals"
+    },
+    "/feedback/{feedbackId}": {
+      "schema": "Feedback",
+      "description": "Customer feedback records"
+    },
+    "/messages/{messageId}": {
+      "schema": "Message",
+      "description": "Native direct messages between customers and shop owners"
+    },
+    "/referrals/{referralId}": {
+      "schema": "Referral",
+      "description": "Invite a business growth referral tracking"
+    }
+  }
+}
